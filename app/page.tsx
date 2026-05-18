@@ -15,8 +15,17 @@ import Footer from '@/components/airsense/Footer';
 export default function Home() {
   const { zones, history, alerts, recommendations, status } = useSensorData();
 
-  const avgCo2 = Math.round(zones.reduce((s, z) => s + z.co2, 0) / zones.length);
-  const avgTemp = Math.round(zones.reduce((s, z) => s + z.temperature, 0) / zones.length * 10) / 10;
+  const avgCo2 =
+    zones.length > 0
+      ? Math.round(zones.reduce((s, z) => s + z.co2, 0) / zones.length)
+      : 0;
+
+  const avgTemp =
+    zones.length > 0
+      ? Math.round(
+          (zones.reduce((s, z) => s + z.temperature, 0) / zones.length) * 10
+        ) / 10
+      : 0;
 
   return (
     <main className="min-h-screen bg-[#060d1a]">
