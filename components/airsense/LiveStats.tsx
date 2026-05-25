@@ -70,6 +70,7 @@ interface LiveStatsProps {
 
 export default function LiveStats({ zones }: LiveStatsProps) {
   const { t } = useI18n();
+  if (zones.length === 0) return null;
   const avgCo2 = Math.round(zones.reduce((s, z) => s + z.co2, 0) / zones.length);
   const bestZone = [...zones].sort((a, b) => b.comfortScore - a.comfortScore)[0];
   const mostCrowded = [...zones].sort((a, b) => b.crowdDensity - a.crowdDensity)[0];

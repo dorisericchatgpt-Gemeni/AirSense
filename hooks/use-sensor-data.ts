@@ -17,17 +17,8 @@ import {
 const HISTORY_LENGTH = 30;
 
 export function useSensorData() {
-  const [zones, setZones] = useState<ZoneData[]>(() => generateZoneData());
-  const [history, setHistory] = useState<TimeSeriesPoint[]>(() => {
-    const pts: TimeSeriesPoint[] = [];
-    let prev: TimeSeriesPoint | undefined;
-    for (let i = 0; i < HISTORY_LENGTH; i++) {
-      const pt = generateTimeSeriesPoint(prev);
-      pts.push(pt);
-      prev = pt;
-    }
-    return pts;
-  });
+  const [zones, setZones] = useState<ZoneData[]>([]);
+  const [history, setHistory] = useState<TimeSeriesPoint[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [status, setStatus] = useState<AirQualityStatus>('GOOD');
@@ -43,6 +34,20 @@ export function useSensorData() {
   }, [history]);
 
   useEffect(() => {
+    const initialZones = generateZoneData();
+    const initialHistory: TimeSeriesPoint[] = [];
+    let prev: TimeSeriesPoint | undefined;
+    for (let i = 0; i < HISTORY_LENGTH; i++) {
+      const pt = generateTimeSeriesPoint(prev);
+      initialHistory.push(pt);
+      prev = pt;
+    }
+    setZones(initialZones);
+    setHistory(initialHistory);
+    setAlerts(generateAlerts(initialZones));
+    setRecommendations(generateRecommendations(initialZones));
+    setStatus(getOverallStatus(initialZones));
+
     const interval = setInterval(() => {
       const newZones = generateZoneData(zonesRef.current);
       const lastPt = historyRef.current[historyRef.current.length - 1];
@@ -55,12 +60,7 @@ export function useSensorData() {
       setStatus(getOverallStatus(newZones));
     }, 3000);
 
-    setAlerts(generateAlerts(zones));
-    setRecommendations(generateRecommendations(zones));
-    setStatus(getOverallStatus(zones));
-
     return () => clearInterval(interval);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { zones, history, alerts, recommendations, status };

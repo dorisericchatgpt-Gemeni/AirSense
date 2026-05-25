@@ -99,6 +99,7 @@ function ZoneComfortCard({ zone }: { zone: ZoneData }) {
 
 export default function ComfortScores({ zones, recommendations }: ComfortScoresProps) {
   const { t } = useI18n();
+  if (zones.length === 0) return null;
   const avgFocus = Math.round(zones.reduce((s, z) => s + z.focusScore, 0) / zones.length);
   const avgComfort = Math.round(zones.reduce((s, z) => s + z.comfortScore, 0) / zones.length);
   const avgFreshness = Math.round(zones.reduce((s, z) => s + z.freshness, 0) / zones.length);
