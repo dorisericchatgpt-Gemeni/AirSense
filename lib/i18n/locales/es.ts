@@ -206,7 +206,7 @@ export const es: Dictionary = {
       api: 'Documentación de API',
     },
     githubRepo: 'Repositorio GitHub',
-    copyright: '© 2025 NTU AirSense · Inteligencia ambiental de Campus Inteligente',
+    copyright: '© 2026 NTU AirSense · Inteligencia ambiental de Campus Inteligente',
     dataSimulated: 'Datos simulados · Solo con fines de demostración',
     allSystemsOperational: 'Todos los sistemas operativos',
     prototypeBox: {

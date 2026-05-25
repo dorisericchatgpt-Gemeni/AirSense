@@ -206,7 +206,7 @@ export const ja: Dictionary = {
       api: 'API ドキュメント',
     },
     githubRepo: 'GitHub リポジトリ',
-    copyright: '© 2025 台湾大学 AirSense · スマート キャンパス環境インテリジェンス',
+    copyright: '© 2026 台湾大学 AirSense · スマート キャンパス環境インテリジェンス',
     dataSimulated: 'データはシミュレーション · デモ用途',
     allSystemsOperational: '全システム正常稼働',
     prototypeBox: {

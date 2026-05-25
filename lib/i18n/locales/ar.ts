@@ -206,7 +206,7 @@ export const ar: Dictionary = {
       api: 'وثائق API',
     },
     githubRepo: 'مستودع GitHub',
-    copyright: '© 2025 NTU AirSense · ذكاء بيئة الحرم الذكي',
+    copyright: '© 2026 NTU AirSense · ذكاء بيئة الحرم الذكي',
     dataSimulated: 'البيانات محاكاة · لأغراض العرض فقط',
     allSystemsOperational: 'جميع الأنظمة تعمل',
     prototypeBox: {

@@ -206,7 +206,7 @@ export const zhCN: Dictionary = {
       api: 'API 文档',
     },
     githubRepo: 'GitHub 代码仓库',
-    copyright: '© 2025 台大 AirSense · 智慧校园环境智能',
+    copyright: '© 2026 台大 AirSense · 智慧校园环境智能',
     dataSimulated: '数据为模拟数据 · 仅供演示',
     allSystemsOperational: '所有系统运行正常',
     prototypeBox: {

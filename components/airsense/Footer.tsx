@@ -69,11 +69,11 @@ export default function Footer() {
                 {t.footer.githubRepo}
               </a>
               <a
-                href="mailto:airsense@ntu.edu.tw"
+                href="mailto:eric050801@gmail.com"
                 className="flex items-center gap-2.5 text-sm text-slate-400 hover:text-white transition-colors"
               >
                 <Mail className="w-4 h-4" />
-                airsense@ntu.edu.tw
+                eric050801@gmail.com
               </a>
             </div>
 

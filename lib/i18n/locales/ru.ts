@@ -206,7 +206,7 @@ export const ru: Dictionary = {
       api: 'Документация API',
     },
     githubRepo: 'Репозиторий GitHub',
-    copyright: '© 2025 NTU AirSense · Интеллект окружающей среды умного кампуса',
+    copyright: '© 2026 NTU AirSense · Интеллект окружающей среды умного кампуса',
     dataSimulated: 'Данные смоделированы · Только для демонстрации',
     allSystemsOperational: 'Все системы работают',
     prototypeBox: {

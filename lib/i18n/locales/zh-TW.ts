@@ -206,7 +206,7 @@ export const zhTW: Dictionary = {
       api: 'API 文件',
     },
     githubRepo: 'GitHub 程式碼倉庫',
-    copyright: '© 2025 臺大 AirSense · 智慧校園環境智能',
+    copyright: '© 2026 臺大 AirSense · 智慧校園環境智能',
     dataSimulated: '資料為模擬資料 · 僅供展示',
     allSystemsOperational: '所有系統運作正常',
     prototypeBox: {
