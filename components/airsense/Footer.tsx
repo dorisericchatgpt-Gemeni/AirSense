@@ -2,8 +2,17 @@
 
 import { motion } from 'framer-motion';
 import { Wind, Github, Mail, ExternalLink, Heart } from 'lucide-react';
+import { useI18n } from '@/lib/i18n/I18nProvider';
 
 export default function Footer() {
+  const { t } = useI18n();
+  const projectLinks = [
+    { label: t.footer.links.beyondBorders, href: '#' },
+    { label: t.footer.links.prototype, href: '#' },
+    { label: t.footer.links.paper, href: '#' },
+    { label: t.footer.links.api, href: '#' },
+  ];
+
   return (
     <footer className="py-16 px-4 border-t border-white/5 relative">
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20" />
@@ -14,7 +23,6 @@ export default function Footer() {
           viewport={{ once: true }}
           className="grid sm:grid-cols-3 gap-12 mb-12"
         >
-          {/* Brand */}
           <div>
             <div className="flex items-center gap-2 mb-4">
               <div className="relative w-8 h-8 flex items-center justify-center">
@@ -24,25 +32,18 @@ export default function Footer() {
               <span className="font-bold text-lg text-white">NTU AirSense</span>
             </div>
             <p className="text-slate-500 text-sm leading-relaxed mb-4">
-              Real-time environmental intelligence for NTU Main Library.
-              Making every breath count for student wellbeing and academic performance.
+              {t.footer.brandDescription}
             </p>
             <div className="flex items-center gap-1 text-xs text-slate-600">
               <Heart className="w-3 h-3 text-red-500/60" />
-              Built for smarter campuses
+              {t.footer.builtFor}
             </div>
           </div>
 
-          {/* Links */}
           <div>
-            <div className="text-xs font-bold tracking-wider text-slate-500 mb-4">PROJECT</div>
+            <div className="text-xs font-bold tracking-wider text-slate-500 mb-4">{t.footer.projectHeading}</div>
             <div className="space-y-3">
-              {[
-                { label: 'Beyond Borders Initiative', href: '#' },
-                { label: 'Smart Campus Prototype', href: '#' },
-                { label: 'Research Paper (Placeholder)', href: '#' },
-                { label: 'API Documentation', href: '#' },
-              ].map(link => (
+              {projectLinks.map(link => (
                 <a
                   key={link.label}
                   href={link.href}
@@ -55,9 +56,8 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Contact */}
           <div>
-            <div className="text-xs font-bold tracking-wider text-slate-500 mb-4">CONNECT</div>
+            <div className="text-xs font-bold tracking-wider text-slate-500 mb-4">{t.footer.connectHeading}</div>
             <div className="space-y-3">
               <a
                 href="https://github.com"
@@ -66,7 +66,7 @@ export default function Footer() {
                 className="flex items-center gap-2.5 text-sm text-slate-400 hover:text-white transition-colors"
               >
                 <Github className="w-4 h-4" />
-                GitHub Repository
+                {t.footer.githubRepo}
               </a>
               <a
                 href="mailto:airsense@ntu.edu.tw"
@@ -78,10 +78,10 @@ export default function Footer() {
             </div>
 
             <div className="mt-6 glass rounded-xl p-4 border border-cyan-500/15">
-              <div className="text-xs text-cyan-400 font-semibold mb-1">Smart Campus Prototype</div>
+              <div className="text-xs text-cyan-400 font-semibold mb-1">{t.footer.prototypeBox.title}</div>
               <div className="text-xs text-slate-500">
-                NTU Beyond Borders Initiative<br />
-                National Taiwan University
+                {t.footer.prototypeBox.line1}<br />
+                {t.footer.prototypeBox.line2}
               </div>
             </div>
           </div>
@@ -89,13 +89,13 @@ export default function Footer() {
 
         <div className="border-t border-white/5 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="text-xs text-slate-600">
-            © 2025 NTU AirSense · Smart Campus Environmental Intelligence
+            {t.footer.copyright}
           </div>
           <div className="flex items-center gap-4 text-xs text-slate-600">
-            <span>Data simulated · For demo purposes</span>
+            <span>{t.footer.dataSimulated}</span>
             <div className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-              All systems operational
+              {t.footer.allSystemsOperational}
             </div>
           </div>
         </div>

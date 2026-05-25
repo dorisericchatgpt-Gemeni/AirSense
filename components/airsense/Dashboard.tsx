@@ -2,10 +2,11 @@
 
 import { motion } from 'framer-motion';
 import {
-  AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
+  AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import { TimeSeriesPoint } from '@/lib/sensor-data';
 import { Wind, Thermometer, Droplets, Users } from 'lucide-react';
+import { useI18n } from '@/lib/i18n/I18nProvider';
 
 interface DashboardProps {
   history: TimeSeriesPoint[];
@@ -35,6 +36,7 @@ interface ChartCardProps {
 }
 
 function ChartCard({ title, icon, children, delay = 0 }: ChartCardProps) {
+  const { t } = useI18n();
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -48,7 +50,7 @@ function ChartCard({ title, icon, children, delay = 0 }: ChartCardProps) {
         <h3 className="text-sm font-semibold text-white">{title}</h3>
         <div className="ml-auto flex items-center gap-1.5 text-xs text-emerald-400">
           <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-          Live
+          {t.dashboard.live}
         </div>
       </div>
       {children}
@@ -57,6 +59,7 @@ function ChartCard({ title, icon, children, delay = 0 }: ChartCardProps) {
 }
 
 export default function Dashboard({ history }: DashboardProps) {
+  const { t } = useI18n();
   const displayData = history.slice(-20);
 
   return (
@@ -70,17 +73,16 @@ export default function Dashboard({ history }: DashboardProps) {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 glass rounded-full text-xs text-cyan-400 border border-cyan-500/20 mb-4">
             <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
-            Updates every 3 seconds
+            {t.dashboard.badge}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">Live Dashboard</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">{t.dashboard.title}</h2>
           <p className="text-slate-400 max-w-xl mx-auto">
-            Real-time sensor telemetry streamed from all study zones.
+            {t.dashboard.subtitle}
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* CO2 */}
-          <ChartCard title="CO2 Concentration" icon={<Wind className="w-4 h-4" />} delay={0}>
+          <ChartCard title={t.dashboard.co2Title} icon={<Wind className="w-4 h-4" />} delay={0}>
             <ResponsiveContainer width="100%" height={200}>
               <AreaChart data={displayData}>
                 <defs>
@@ -96,7 +98,7 @@ export default function Dashboard({ history }: DashboardProps) {
                 <Area
                   type="monotone"
                   dataKey="co2"
-                  name="CO2 (ppm)"
+                  name={t.dashboard.co2Name}
                   stroke="#22d3ee"
                   strokeWidth={2}
                   fill="url(#co2Gradient)"
@@ -106,13 +108,12 @@ export default function Dashboard({ history }: DashboardProps) {
               </AreaChart>
             </ResponsiveContainer>
             <div className="flex gap-4 mt-2 text-xs text-slate-500">
-              <span className="text-amber-400/80">800 ppm: Warning</span>
-              <span className="text-red-400/80">1200 ppm: Critical</span>
+              <span className="text-amber-400/80">{t.dashboard.co2Warning}</span>
+              <span className="text-red-400/80">{t.dashboard.co2Critical}</span>
             </div>
           </ChartCard>
 
-          {/* Temperature */}
-          <ChartCard title="Temperature" icon={<Thermometer className="w-4 h-4" />} delay={0.1}>
+          <ChartCard title={t.dashboard.tempTitle} icon={<Thermometer className="w-4 h-4" />} delay={0.1}>
             <ResponsiveContainer width="100%" height={200}>
               <AreaChart data={displayData}>
                 <defs>
@@ -128,7 +129,7 @@ export default function Dashboard({ history }: DashboardProps) {
                 <Area
                   type="monotone"
                   dataKey="temperature"
-                  name="Temp (°C)"
+                  name={t.dashboard.tempName}
                   stroke="#f97316"
                   strokeWidth={2}
                   fill="url(#tempGrad)"
@@ -139,8 +140,7 @@ export default function Dashboard({ history }: DashboardProps) {
             </ResponsiveContainer>
           </ChartCard>
 
-          {/* Humidity */}
-          <ChartCard title="Humidity" icon={<Droplets className="w-4 h-4" />} delay={0.2}>
+          <ChartCard title={t.dashboard.humidityTitle} icon={<Droplets className="w-4 h-4" />} delay={0.2}>
             <ResponsiveContainer width="100%" height={200}>
               <AreaChart data={displayData}>
                 <defs>
@@ -156,7 +156,7 @@ export default function Dashboard({ history }: DashboardProps) {
                 <Area
                   type="monotone"
                   dataKey="humidity"
-                  name="Humidity (%)"
+                  name={t.dashboard.humidityName}
                   stroke="#60a5fa"
                   strokeWidth={2}
                   fill="url(#humGrad)"
@@ -167,8 +167,7 @@ export default function Dashboard({ history }: DashboardProps) {
             </ResponsiveContainer>
           </ChartCard>
 
-          {/* Occupancy */}
-          <ChartCard title="Occupancy Trend" icon={<Users className="w-4 h-4" />} delay={0.3}>
+          <ChartCard title={t.dashboard.occupancyTitle} icon={<Users className="w-4 h-4" />} delay={0.3}>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={displayData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -178,7 +177,7 @@ export default function Dashboard({ history }: DashboardProps) {
                 <Line
                   type="monotone"
                   dataKey="occupancy"
-                  name="Occupancy (%)"
+                  name={t.dashboard.occupancyName}
                   stroke="#a78bfa"
                   strokeWidth={2}
                   dot={false}

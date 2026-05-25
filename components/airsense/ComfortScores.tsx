@@ -2,12 +2,13 @@
 
 import { motion } from 'framer-motion';
 import { RadialBarChart, RadialBar, ResponsiveContainer, PolarAngleAxis } from 'recharts';
-import { ZoneData } from '@/lib/sensor-data';
+import { ZoneData, Recommendation } from '@/lib/sensor-data';
 import { Brain, Heart, Leaf, Lightbulb } from 'lucide-react';
+import { useI18n, interpolate } from '@/lib/i18n/I18nProvider';
 
 interface ComfortScoresProps {
   zones: ZoneData[];
-  recommendations: string[];
+  recommendations: Recommendation[];
 }
 
 function RadialGauge({ value, color, label, icon: Icon }: { value: number; color: string; label: string; icon: any }) {
@@ -39,11 +40,16 @@ function RadialGauge({ value, color, label, icon: Icon }: { value: number; color
 }
 
 function ZoneComfortCard({ zone }: { zone: ZoneData }) {
+  const { t } = useI18n();
   const scores = [
-    { label: 'Focus', value: zone.focusScore, color: '#22d3ee' },
-    { label: 'Comfort', value: zone.comfortScore, color: '#a78bfa' },
-    { label: 'Freshness', value: zone.freshness, color: '#34d399' },
+    { label: t.comfort.focus, value: zone.focusScore, color: '#22d3ee' },
+    { label: t.comfort.comfort, value: zone.comfortScore, color: '#a78bfa' },
+    { label: t.comfort.freshness, value: zone.freshness, color: '#34d399' },
   ];
+  const statusLabel =
+    zone.comfortScore >= 70 ? t.comfort.optimal :
+    zone.comfortScore >= 45 ? t.comfort.moderate :
+    t.comfort.poor;
 
   return (
     <motion.div
@@ -54,7 +60,7 @@ function ZoneComfortCard({ zone }: { zone: ZoneData }) {
     >
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h4 className="font-semibold text-white text-sm">{zone.name.split(' (')[0]}</h4>
+          <h4 className="font-semibold text-white text-sm">{t.airMap.zoneLabels[zone.id]}</h4>
           <div className="text-xs text-slate-500 mt-0.5">
             CO2: {zone.co2} ppm · {zone.temperature}°C
           </div>
@@ -64,7 +70,7 @@ function ZoneComfortCard({ zone }: { zone: ZoneData }) {
           zone.comfortScore >= 45 ? 'bg-amber-500/20 text-amber-400' :
           'bg-red-500/20 text-red-400'
         }`}>
-          {zone.comfortScore >= 70 ? 'Optimal' : zone.comfortScore >= 45 ? 'Moderate' : 'Poor'}
+          {statusLabel}
         </div>
       </div>
 
@@ -92,10 +98,21 @@ function ZoneComfortCard({ zone }: { zone: ZoneData }) {
 }
 
 export default function ComfortScores({ zones, recommendations }: ComfortScoresProps) {
+  const { t } = useI18n();
   const avgFocus = Math.round(zones.reduce((s, z) => s + z.focusScore, 0) / zones.length);
   const avgComfort = Math.round(zones.reduce((s, z) => s + z.comfortScore, 0) / zones.length);
   const avgFreshness = Math.round(zones.reduce((s, z) => s + z.freshness, 0) / zones.length);
-  const bestZone = [...zones].sort((a, b) => b.comfortScore - a.comfortScore)[0];
+
+  const renderRec = (rec: Recommendation): string => {
+    const template = t.comfort.recommendations[rec.key];
+    const resolvedZones: Record<string, string> = {};
+    if (rec.zoneRefs) {
+      for (const [k, zoneId] of Object.entries(rec.zoneRefs)) {
+        resolvedZones[k] = t.airMap.zoneNames[zoneId];
+      }
+    }
+    return interpolate(template, { ...rec.params, ...resolvedZones });
+  };
 
   return (
     <section id="comfort" className="py-24 px-4">
@@ -108,34 +125,31 @@ export default function ComfortScores({ zones, recommendations }: ComfortScoresP
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 glass rounded-full text-xs text-cyan-400 border border-cyan-500/20 mb-4">
             <Brain className="w-3.5 h-3.5" />
-            AI-Computed Metrics
+            {t.comfort.badge}
           </div>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">Study Comfort Intelligence</h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">{t.comfort.title}</h2>
           <p className="text-slate-400 max-w-xl mx-auto">
-            Multi-factor scores computed from CO2, temperature, humidity, and crowd density.
+            {t.comfort.subtitle}
           </p>
         </motion.div>
 
-        {/* Overall radial gauges */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="glass rounded-2xl p-8 border border-white/5 mb-8 flex flex-wrap justify-around gap-8"
         >
-          <RadialGauge value={avgFocus} color="#22d3ee" label="Focus Score" icon={Brain} />
-          <RadialGauge value={avgComfort} color="#a78bfa" label="Comfort Score" icon={Heart} />
-          <RadialGauge value={avgFreshness} color="#34d399" label="Freshness Score" icon={Leaf} />
+          <RadialGauge value={avgFocus} color="#22d3ee" label={t.comfort.focusScore} icon={Brain} />
+          <RadialGauge value={avgComfort} color="#a78bfa" label={t.comfort.comfortScore} icon={Heart} />
+          <RadialGauge value={avgFreshness} color="#34d399" label={t.comfort.freshnessScore} icon={Leaf} />
         </motion.div>
 
-        {/* Zone cards */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {zones.map(zone => (
             <ZoneComfortCard key={zone.id} zone={zone} />
           ))}
         </div>
 
-        {/* Recommendations */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -146,20 +160,20 @@ export default function ComfortScores({ zones, recommendations }: ComfortScoresP
             <div className="w-8 h-8 rounded-xl bg-cyan-500/10 flex items-center justify-center">
               <Lightbulb className="w-4 h-4 text-cyan-400" />
             </div>
-            <h3 className="font-semibold text-white">Smart Recommendations</h3>
-            <span className="ml-auto text-xs text-slate-500">Updated live</span>
+            <h3 className="font-semibold text-white">{t.comfort.recommendationsTitle}</h3>
+            <span className="ms-auto text-xs text-slate-500">{t.comfort.updatedLive}</span>
           </div>
           <div className="grid sm:grid-cols-2 gap-3">
             {recommendations.map((rec, i) => (
               <motion.div
-                key={i}
+                key={`${rec.key}-${i}`}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.1 }}
                 className="flex items-start gap-3 p-3 rounded-xl bg-white/3 border border-white/5"
               >
                 <span className="text-cyan-400 mt-0.5 text-xs font-bold">0{i + 1}</span>
-                <p className="text-sm text-slate-300 leading-relaxed">{rec}</p>
+                <p className="text-sm text-slate-300 leading-relaxed">{renderRec(rec)}</p>
               </motion.div>
             ))}
           </div>

@@ -2,66 +2,26 @@
 
 import { motion } from 'framer-motion';
 import { Cpu, Wifi, Database, ChartLine as LineChart, Zap, Brain, Globe, Leaf } from 'lucide-react';
+import { useI18n } from '@/lib/i18n/I18nProvider';
 
-const visionItems = [
-  {
-    icon: Cpu,
-    title: 'AI-Controlled HVAC',
-    description: 'Machine learning algorithms automatically adjust ventilation, temperature, and air circulation based on real-time occupancy patterns and CO2 forecasts.',
-    color: 'text-cyan-400',
-    bg: 'bg-cyan-500/10',
-    border: 'border-cyan-500/20',
-  },
-  {
-    icon: Wifi,
-    title: 'IoT Sensor Deployment',
-    description: 'Dense sensor mesh across all 18 study zones providing sub-second environmental telemetry with LoRaWAN and BLE mesh connectivity.',
-    color: 'text-blue-400',
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/20',
-  },
-  {
-    icon: Globe,
-    title: 'Campus-wide Air Intelligence',
-    description: 'Unified air quality monitoring platform scaling across all NTU buildings, creating a campus digital twin for environmental management.',
-    color: 'text-violet-400',
-    bg: 'bg-violet-500/10',
-    border: 'border-violet-500/20',
-  },
-  {
-    icon: Zap,
-    title: 'Energy Optimization',
-    description: 'Predictive load balancing reduces HVAC energy consumption by 30% through smart scheduling based on attendance forecasts.',
-    color: 'text-amber-400',
-    bg: 'bg-amber-500/10',
-    border: 'border-amber-500/20',
-  },
-  {
-    icon: Brain,
-    title: 'Cognitive Performance Research',
-    description: 'Partner with NTU psychology department to study correlations between air quality metrics and student focus, retention, and exam performance.',
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-500/10',
-    border: 'border-emerald-500/20',
-  },
-  {
-    icon: Leaf,
-    title: 'Carbon Footprint Analytics',
-    description: 'Real-time carbon accounting dashboards aligned with NTU\'s Net Zero 2050 commitment, tracking and optimizing building-level emissions.',
-    color: 'text-green-400',
-    bg: 'bg-green-500/10',
-    border: 'border-green-500/20',
-  },
+const visionMeta = [
+  { key: 'hvac' as const,      icon: Cpu,   color: 'text-cyan-400',    bg: 'bg-cyan-500/10',    border: 'border-cyan-500/20' },
+  { key: 'iot' as const,       icon: Wifi,  color: 'text-blue-400',    bg: 'bg-blue-500/10',    border: 'border-blue-500/20' },
+  { key: 'campus' as const,    icon: Globe, color: 'text-violet-400',  bg: 'bg-violet-500/10',  border: 'border-violet-500/20' },
+  { key: 'energy' as const,    icon: Zap,   color: 'text-amber-400',   bg: 'bg-amber-500/10',   border: 'border-amber-500/20' },
+  { key: 'cognitive' as const, icon: Brain, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
+  { key: 'carbon' as const,    icon: Leaf,  color: 'text-green-400',   bg: 'bg-green-500/10',   border: 'border-green-500/20' },
 ];
 
-const timeline = [
-  { phase: 'Phase 1', label: 'Pilot Deployment', desc: 'B1 Library — 18 sensors', status: 'active', year: '2025' },
-  { phase: 'Phase 2', label: 'Campus Expansion', desc: 'All major study buildings', status: 'upcoming', year: '2026' },
-  { phase: 'Phase 3', label: 'AI Integration', desc: 'Predictive HVAC control', status: 'upcoming', year: '2027' },
-  { phase: 'Phase 4', label: 'Smart Campus Network', desc: 'Full NTU digital twin', status: 'upcoming', year: '2028' },
+const timelineMeta = [
+  { key: 'p1' as const, status: 'active',   year: '2025' },
+  { key: 'p2' as const, status: 'upcoming', year: '2026' },
+  { key: 'p3' as const, status: 'upcoming', year: '2027' },
+  { key: 'p4' as const, status: 'upcoming', year: '2028' },
 ];
 
 export default function FutureVision() {
+  const { t } = useI18n();
   return (
     <section id="vision" className="py-24 px-4 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(99,102,241,0.06)_0%,_transparent_60%)]" />
@@ -75,32 +35,31 @@ export default function FutureVision() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-1.5 glass rounded-full text-xs text-violet-400 border border-violet-500/20 mb-4">
             <Globe className="w-3.5 h-3.5" />
-            Future Smart Campus Vision
+            {t.vision.badge}
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
-            Beyond Borders Initiative
+            {t.vision.title}
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            AirSense is the foundation of NTU&apos;s intelligent campus ecosystem —
-            combining IoT, AI, and environmental science to optimize every breath.
+            {t.vision.subtitle}
           </p>
         </motion.div>
 
-        {/* Vision cards */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
-          {visionItems.map((item, i) => {
-            const Icon = item.icon;
+          {visionMeta.map((meta, i) => {
+            const Icon = meta.icon;
+            const item = t.vision.items[meta.key];
             return (
               <motion.div
-                key={item.title}
+                key={meta.key}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className={`glass rounded-2xl p-6 border hover:scale-105 transition-all duration-300 cursor-default ${item.border}`}
+                className={`glass rounded-2xl p-6 border hover:scale-105 transition-all duration-300 cursor-default ${meta.border}`}
               >
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${item.bg}`}>
-                  <Icon className={`w-5 h-5 ${item.color}`} />
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-4 ${meta.bg}`}>
+                  <Icon className={`w-5 h-5 ${meta.color}`} />
                 </div>
                 <h3 className="text-white font-semibold mb-2">{item.title}</h3>
                 <p className="text-slate-400 text-sm leading-relaxed">{item.description}</p>
@@ -109,47 +68,48 @@ export default function FutureVision() {
           })}
         </div>
 
-        {/* Timeline */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="glass rounded-2xl p-8 border border-white/5"
         >
-          <h3 className="text-white font-semibold text-lg mb-8 text-center">Deployment Roadmap</h3>
+          <h3 className="text-white font-semibold text-lg mb-8 text-center">{t.vision.roadmapTitle}</h3>
           <div className="relative">
-            {/* Timeline line */}
             <div className="absolute top-5 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent" />
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-              {timeline.map((item, i) => (
-                <motion.div
-                  key={item.phase}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="flex flex-col items-center text-center"
-                >
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-4 z-10 relative border-2 ${
-                    item.status === 'active'
-                      ? 'bg-cyan-500/20 border-cyan-400 shadow-lg shadow-cyan-500/20'
-                      : 'bg-white/5 border-slate-600'
-                  }`}>
-                    {item.status === 'active' ? (
-                      <span className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse" />
-                    ) : (
-                      <span className="w-3 h-3 bg-slate-600 rounded-full" />
-                    )}
-                  </div>
-                  <div className={`text-xs font-bold tracking-wider mb-1 ${item.status === 'active' ? 'text-cyan-400' : 'text-slate-500'}`}>
-                    {item.phase}
-                  </div>
-                  <div className="text-sm font-semibold text-white mb-1">{item.label}</div>
-                  <div className="text-xs text-slate-500 mb-1">{item.desc}</div>
-                  <div className={`text-xs font-bold ${item.status === 'active' ? 'text-cyan-400' : 'text-slate-600'}`}>{item.year}</div>
-                </motion.div>
-              ))}
+              {timelineMeta.map((meta, i) => {
+                const item = t.vision.phases[meta.key];
+                return (
+                  <motion.div
+                    key={meta.key}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="flex flex-col items-center text-center"
+                  >
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-4 z-10 relative border-2 ${
+                      meta.status === 'active'
+                        ? 'bg-cyan-500/20 border-cyan-400 shadow-lg shadow-cyan-500/20'
+                        : 'bg-white/5 border-slate-600'
+                    }`}>
+                      {meta.status === 'active' ? (
+                        <span className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse" />
+                      ) : (
+                        <span className="w-3 h-3 bg-slate-600 rounded-full" />
+                      )}
+                    </div>
+                    <div className={`text-xs font-bold tracking-wider mb-1 ${meta.status === 'active' ? 'text-cyan-400' : 'text-slate-500'}`}>
+                      {item.phase}
+                    </div>
+                    <div className="text-sm font-semibold text-white mb-1">{item.label}</div>
+                    <div className="text-xs text-slate-500 mb-1">{item.desc}</div>
+                    <div className={`text-xs font-bold ${meta.status === 'active' ? 'text-cyan-400' : 'text-slate-600'}`}>{meta.year}</div>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </motion.div>

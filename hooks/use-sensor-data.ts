@@ -6,6 +6,7 @@ import {
   TimeSeriesPoint,
   Alert,
   AirQualityStatus,
+  Recommendation,
   generateZoneData,
   generateTimeSeriesPoint,
   getOverallStatus,
@@ -28,7 +29,7 @@ export function useSensorData() {
     return pts;
   });
   const [alerts, setAlerts] = useState<Alert[]>([]);
-  const [recommendations, setRecommendations] = useState<string[]>([]);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [status, setStatus] = useState<AirQualityStatus>('GOOD');
   const zonesRef = useRef(zones);
   const historyRef = useRef(history);

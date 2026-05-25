@@ -2,7 +2,6 @@ export type ZoneId = 'a-area' | 'b-area' | 'discussion' | 'conference' | 'restro
 
 export interface ZoneData {
   id: ZoneId;
-  name: string;
   co2: number;
   temperature: number;
   humidity: number;
@@ -23,12 +22,29 @@ export interface TimeSeriesPoint {
 
 export type AirQualityStatus = 'GOOD' | 'MODERATE' | 'BAD';
 
+export type AlertMessageKey = 'criticalCo2' | 'elevatedCo2' | 'poorVentilation';
+
 export interface Alert {
   id: string;
   type: 'warning' | 'critical' | 'info';
-  zone: string;
-  message: string;
+  zoneId: ZoneId;
+  messageKey: AlertMessageKey;
+  messageParams?: Record<string, string | number>;
   timestamp: Date;
+}
+
+export type RecommendationKey =
+  | 'bestStudy'
+  | 'crowdedConsider'
+  | 'aHigherThanB'
+  | 'restroomVentilation'
+  | 'avgRising'
+  | 'stable';
+
+export interface Recommendation {
+  key: RecommendationKey;
+  params?: Record<string, string | number>;
+  zoneRefs?: Record<string, ZoneId>;
 }
 
 function clamp(val: number, min: number, max: number) {
@@ -39,29 +55,25 @@ function jitter(base: number, range: number) {
   return base + (Math.random() - 0.5) * 2 * range;
 }
 
-export function generateZoneData(prev?: ZoneData[]): ZoneData[] {
-  const defaults: Omit<ZoneData, 'airQualityScore' | 'comfortScore' | 'freshness' | 'focusScore'>[] = [
-    { id: 'a-area', name: 'A Area (24hr Study)', co2: 950, temperature: 24, humidity: 58, crowdDensity: 80 },
-    { id: 'b-area', name: 'B Area', co2: 680, temperature: 23, humidity: 52, crowdDensity: 45 },
-    { id: 'discussion', name: 'Discussion Area', co2: 820, temperature: 25, humidity: 60, crowdDensity: 60 },
-    { id: 'conference', name: 'International Conference Hall', co2: 740, temperature: 22, humidity: 50, crowdDensity: 30 },
-    { id: 'restroom', name: 'Restroom Area', co2: 1100, temperature: 26, humidity: 72, crowdDensity: 15 },
-  ];
+const ZONE_DEFAULTS: { id: ZoneId; co2: number; temperature: number; humidity: number; crowdDensity: number }[] = [
+  { id: 'a-area',     co2: 950,  temperature: 24, humidity: 58, crowdDensity: 80 },
+  { id: 'b-area',     co2: 680,  temperature: 23, humidity: 52, crowdDensity: 45 },
+  { id: 'discussion', co2: 820,  temperature: 25, humidity: 60, crowdDensity: 60 },
+  { id: 'conference', co2: 740,  temperature: 22, humidity: 50, crowdDensity: 30 },
+  { id: 'restroom',   co2: 1100, temperature: 26, humidity: 72, crowdDensity: 15 },
+];
 
-  return defaults.map((d, i) => {
+export function generateZoneData(prev?: ZoneData[]): ZoneData[] {
+  return ZONE_DEFAULTS.map((d, i) => {
     const prevZone = prev?.[i];
     const co2 = clamp(jitter(prevZone?.co2 ?? d.co2, 25), 400, 1500);
     const temperature = clamp(jitter(prevZone?.temperature ?? d.temperature, 0.3), 18, 32);
     const humidity = clamp(jitter(prevZone?.humidity ?? d.humidity, 1.5), 30, 95);
     const crowdDensity = clamp(jitter(prevZone?.crowdDensity ?? d.crowdDensity, 3), 0, 100);
 
-    // co2 score: 400=100, 1200=0
     const co2Score = clamp(100 - ((co2 - 400) / 800) * 100, 0, 100);
-    // temp score: 22 ideal
     const tempScore = clamp(100 - Math.abs(temperature - 22) * 8, 0, 100);
-    // humidity score: 50 ideal
     const humScore = clamp(100 - Math.abs(humidity - 50) * 1.5, 0, 100);
-    // crowd score
     const crowdScore = clamp(100 - crowdDensity, 0, 100);
 
     const airQualityScore = Math.round((co2Score * 0.5 + humScore * 0.3 + tempScore * 0.2));
@@ -71,7 +83,6 @@ export function generateZoneData(prev?: ZoneData[]): ZoneData[] {
 
     return {
       id: d.id,
-      name: d.name,
       co2: Math.round(co2),
       temperature: Math.round(temperature * 10) / 10,
       humidity: Math.round(humidity),
@@ -110,16 +121,18 @@ export function generateAlerts(zones: ZoneData[]): Alert[] {
       alerts.push({
         id: `${zone.id}-critical`,
         type: 'critical',
-        zone: zone.name,
-        message: `Critical CO2 level: ${zone.co2} ppm`,
+        zoneId: zone.id,
+        messageKey: 'criticalCo2',
+        messageParams: { value: zone.co2 },
         timestamp: new Date(),
       });
     } else if (zone.co2 > 800) {
       alerts.push({
         id: `${zone.id}-warning`,
         type: 'warning',
-        zone: zone.name,
-        message: `Elevated CO2: ${zone.co2} ppm`,
+        zoneId: zone.id,
+        messageKey: 'elevatedCo2',
+        messageParams: { value: zone.co2 },
         timestamp: new Date(),
       });
     }
@@ -127,8 +140,8 @@ export function generateAlerts(zones: ZoneData[]): Alert[] {
       alerts.push({
         id: 'restroom-ventilation',
         type: 'warning',
-        zone: zone.name,
-        message: 'Poor ventilation detected. Recommend immediate ventilation.',
+        zoneId: zone.id,
+        messageKey: 'poorVentilation',
         timestamp: new Date(),
       });
     }
@@ -136,30 +149,37 @@ export function generateAlerts(zones: ZoneData[]): Alert[] {
   return alerts;
 }
 
-export function generateRecommendations(zones: ZoneData[]): string[] {
-  const recs: string[] = [];
+export function generateRecommendations(zones: ZoneData[]): Recommendation[] {
+  const recs: Recommendation[] = [];
   const sorted = [...zones].sort((a, b) => b.comfortScore - a.comfortScore);
   const best = sorted[0];
   const crowded = zones.filter(z => z.crowdDensity > 75);
 
-  recs.push(`Best study environment: ${best.name} (Comfort ${best.comfortScore}%)`);
+  recs.push({
+    key: 'bestStudy',
+    params: { score: best.comfortScore },
+    zoneRefs: { zone: best.id },
+  });
   if (crowded.length > 0) {
-    recs.push(`${crowded[0].name} is crowded. Consider ${sorted[0].name}.`);
+    recs.push({
+      key: 'crowdedConsider',
+      zoneRefs: { crowded: crowded[0].id, alternative: sorted[0].id },
+    });
   }
   const aArea = zones.find(z => z.id === 'a-area');
   const bArea = zones.find(z => z.id === 'b-area');
   if (aArea && bArea && aArea.co2 > bArea.co2 + 100) {
-    recs.push(`A Area CO2 higher than B Area. B Area has better ventilation.`);
+    recs.push({ key: 'aHigherThanB' });
   }
   const restroom = zones.find(z => z.id === 'restroom');
   if (restroom && restroom.co2 > 900) {
-    recs.push(`Ventilation efficiency decreasing near Restroom Area.`);
+    recs.push({ key: 'restroomVentilation' });
   }
   const avgCo2 = zones.reduce((s, z) => s + z.co2, 0) / zones.length;
   if (avgCo2 > 900) {
-    recs.push(`Average CO2 rising. Opening windows recommended.`);
+    recs.push({ key: 'avgRising' });
   } else {
-    recs.push(`Air quality stable. Good conditions for focused study.`);
+    recs.push({ key: 'stable' });
   }
   return recs.slice(0, 4);
 }

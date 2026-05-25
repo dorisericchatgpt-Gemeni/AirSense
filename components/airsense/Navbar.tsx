@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Wind, Menu, X, Activity } from 'lucide-react';
 import { AirQualityStatus } from '@/lib/sensor-data';
+import { useI18n } from '@/lib/i18n/I18nProvider';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface NavbarProps {
   status: AirQualityStatus;
@@ -16,6 +18,7 @@ const statusConfig = {
 };
 
 export default function Navbar({ status }: NavbarProps) {
+  const { t } = useI18n();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const cfg = statusConfig[status];
@@ -27,10 +30,10 @@ export default function Navbar({ status }: NavbarProps) {
   }, []);
 
   const links = [
-    { label: 'Air Map', href: '#airmap' },
-    { label: 'Dashboard', href: '#dashboard' },
-    { label: 'Comfort', href: '#comfort' },
-    { label: 'Vision', href: '#vision' },
+    { label: t.navbar.airMap, href: '#airmap' },
+    { label: t.navbar.dashboard, href: '#dashboard' },
+    { label: t.navbar.comfort, href: '#comfort' },
+    { label: t.navbar.vision, href: '#vision' },
   ];
 
   return (
@@ -43,7 +46,6 @@ export default function Navbar({ status }: NavbarProps) {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Logo */}
         <div className="flex items-center gap-2">
           <div className="relative w-8 h-8 flex items-center justify-center">
             <div className="absolute inset-0 rounded-lg bg-cyan-500/20 animate-pulse" />
@@ -54,7 +56,6 @@ export default function Navbar({ status }: NavbarProps) {
           </span>
         </div>
 
-        {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-6">
           {links.map(link => (
             <a
@@ -67,29 +68,26 @@ export default function Navbar({ status }: NavbarProps) {
           ))}
         </div>
 
-        {/* Status Badge */}
-        <div className="hidden md:flex items-center gap-3">
-          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${cfg.bg} ${cfg.color} ${cfg.border}`}>
+        <div className="flex items-center gap-2 md:gap-3">
+          <div className={`hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border ${cfg.bg} ${cfg.color} ${cfg.border}`}>
             <span className={`w-2 h-2 rounded-full ${cfg.dot} animate-pulse`} />
-            {status}
+            {t.status[status]}
           </div>
-          <a href="#dashboard" className="flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors">
+          <a href="#dashboard" className="hidden md:flex items-center gap-1.5 text-xs text-cyan-400 hover:text-cyan-300 transition-colors">
             <Activity className="w-3.5 h-3.5" />
-            Live
+            {t.navbar.live}
           </a>
+          <LanguageSwitcher />
+          <button
+            className="md:hidden p-2 text-slate-400 hover:text-white"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={t.navbar.toggleMenu}
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
-
-        {/* Mobile toggle */}
-        <button
-          className="md:hidden p-2 text-slate-400 hover:text-white"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -111,7 +109,7 @@ export default function Navbar({ status }: NavbarProps) {
               ))}
               <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold border w-fit ${cfg.bg} ${cfg.color} ${cfg.border}`}>
                 <span className={`w-2 h-2 rounded-full ${cfg.dot} animate-pulse`} />
-                Air Quality: {status}
+                {t.navbar.airQuality}: {t.status[status]}
               </div>
             </div>
           </motion.div>
