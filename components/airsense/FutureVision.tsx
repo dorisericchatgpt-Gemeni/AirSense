@@ -14,10 +14,10 @@ const visionMeta = [
 ];
 
 const timelineMeta = [
-  { key: 'p1' as const, status: 'active',   year: '2025' },
-  { key: 'p2' as const, status: 'upcoming', year: '2026' },
-  { key: 'p3' as const, status: 'upcoming', year: '2027' },
-  { key: 'p4' as const, status: 'upcoming', year: '2028' },
+  { key: 'p1' as const, status: 'active',   year: '2026' },
+  { key: 'p2' as const, status: 'upcoming', year: '2027' },
+  { key: 'p3' as const, status: 'upcoming', year: '2028' },
+  { key: 'p4' as const, status: 'upcoming', year: '2029' },
 ];
 
 export default function FutureVision() {
