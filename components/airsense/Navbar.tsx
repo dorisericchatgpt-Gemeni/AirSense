@@ -36,6 +36,17 @@ export default function Navbar({ status }: NavbarProps) {
     { label: t.navbar.vision, href: '#vision' },
   ];
 
+  const handleMobileNav = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setMobileOpen(false);
+    const id = href.slice(1);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  };
+
   return (
     <motion.nav
       initial={{ y: -80, opacity: 0 }}
@@ -102,7 +113,7 @@ export default function Navbar({ status }: NavbarProps) {
                   key={link.href}
                   href={link.href}
                   className="text-sm text-slate-300 hover:text-white py-2 border-b border-white/5 last:border-0"
-                  onClick={() => setMobileOpen(false)}
+                  onClick={(e) => handleMobileNav(e, link.href)}
                 >
                   {link.label}
                 </a>
