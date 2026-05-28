@@ -153,6 +153,7 @@ AirSense/
 - 🌐 **新增完整多語系 (i18n) 系統**：自製輕量 i18n provider（`lib/i18n/`），支援 **10 種語言**（英、繁中、簡中、日、德、西、葡、荷、俄、阿拉伯），含阿拉伯文 **RTL** 由右至左排版；新增 `LanguageSwitcher` 語言切換元件。
 - 🔤 **全元件文字外部化**：將 11 個 AirSense 區塊元件（Navbar、Hero、AirMap、Dashboard、AlertPanel、ComfortScores、LiveStats、FutureVision、TechArchitecture、Footer 等）內的所有顯示文字抽成翻譯字串，改由 i18n 系統渲染。
 - 🐛 **修正 hydration 問題**：將隨機數據生成延後到 client 端 mount 後執行（`fix(hydration)`），避免 SSR / CSR 不一致。
+- 📱 **修正手機版導覽列跳轉**：手機選單的「空氣地圖／儀表板／舒適度／願景」按鈕原本點擊後不會捲到對應區塊。改為先關閉選單、待收合動畫結束後再以 `scrollIntoView` 平滑捲動，並加上 `scroll-padding-top` 避免目標區塊被固定導覽列遮住。
 - 🗓️ **更新時間線與頁尾**：roadmap 時程調整、頁尾版權年份與聯絡資訊更新。
 - 📄 **新增本 README**：功能說明 + 部署上線教學。
 
