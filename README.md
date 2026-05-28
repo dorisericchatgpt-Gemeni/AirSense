@@ -143,6 +143,13 @@ AirSense/
 
 ---
 
+## 🙏 出處與致謝 (Credits & Attribution)
+
+本專案改作自 **[Ptorioo/AirSense](https://github.com/Ptorioo/AirSense)**。
+原始專案由 [@Ptorioo](https://github.com/Ptorioo) 開發，本 repo 在其基礎上進行修改與擴充（例如新增 10 種語言的多語系切換等）。感謝原作者的開源貢獻。
+
+> This project is adapted from [Ptorioo/AirSense](https://github.com/Ptorioo/AirSense), originally created by [@Ptorioo](https://github.com/Ptorioo). Many thanks to the original author for open-sourcing the work.
+
 ## 📄 授權 (License)
 
-本專案為 demo / 學習用途。Fork 自 [Ptorioo/AirSense](https://github.com/Ptorioo/AirSense)。
+本專案為 demo / 作品集 / 學習用途。
