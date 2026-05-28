@@ -146,7 +146,15 @@ AirSense/
 ## 🙏 出處與致謝 (Credits & Attribution)
 
 本專案改作自 **[Ptorioo/AirSense](https://github.com/Ptorioo/AirSense)**。
-原始專案由 [@Ptorioo](https://github.com/Ptorioo) 開發，本 repo 在其基礎上進行修改與擴充（例如新增 10 種語言的多語系切換等）。感謝原作者的開源貢獻。
+原始專案由 [@Ptorioo](https://github.com/Ptorioo) 開發，本 repo 在其基礎上進行修改與擴充。感謝原作者的開源貢獻。
+
+**本 fork 相較原專案的主要改動：**
+
+- 🌐 **新增完整多語系 (i18n) 系統**：自製輕量 i18n provider（`lib/i18n/`），支援 **10 種語言**（英、繁中、簡中、日、德、西、葡、荷、俄、阿拉伯），含阿拉伯文 **RTL** 由右至左排版；新增 `LanguageSwitcher` 語言切換元件。
+- 🔤 **全元件文字外部化**：將 11 個 AirSense 區塊元件（Navbar、Hero、AirMap、Dashboard、AlertPanel、ComfortScores、LiveStats、FutureVision、TechArchitecture、Footer 等）內的所有顯示文字抽成翻譯字串，改由 i18n 系統渲染。
+- 🐛 **修正 hydration 問題**：將隨機數據生成延後到 client 端 mount 後執行（`fix(hydration)`），避免 SSR / CSR 不一致。
+- 🗓️ **更新時間線與頁尾**：roadmap 時程調整、頁尾版權年份與聯絡資訊更新。
+- 📄 **新增本 README**：功能說明 + 部署上線教學。
 
 > This project is adapted from [Ptorioo/AirSense](https://github.com/Ptorioo/AirSense), originally created by [@Ptorioo](https://github.com/Ptorioo). Many thanks to the original author for open-sourcing the work.
 
